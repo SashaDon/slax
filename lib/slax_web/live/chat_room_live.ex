@@ -1,36 +1,35 @@
 defmodule SlaxWeb.ChatRoomLive do
   use SlaxWeb, :live_view
 
+  alias Slax.Chat.Room
+  alias Slax.Repo
+
   def render(assigns) do
     ~H"""
     <div>Welcome to the chat!</div>
 
-    <%!-- normal ways of rendering elixir logic in heex --%>
-    <div>{2 + 2}</div>
-    <div>{2 + 2}</div>
-
-    <%!-- without rendering --%>
-    <div><% 2 + 2 %></div>
-
-    <%!-- loops --%>
-    <%!-- <ul>
-      <%= for number <- 1..10 do %>
-        <li>{number}</li>
-      <% end %>
-    </ul> --%>
-
-    <ul>
-      <li :for={number <- 1..10}>{number}</li>
-    </ul>
-
-    <%!-- conditionals --%>
-    <div id="person">
-      <%= if 15 > 10 do %>
-        <p>15 is greater than 10</p>
-      <% else %>
-        <p>15 is not greater than 10</p>
-      <% end %>
+    <div class="flex flex-col grow shadow-lg">
+      <div class="flex justify-between items-center shrink-0 h-16 bg-white border-b border-slate-300 px-4">
+        <div class="flex flex-col gap-1.5">
+          <h1 class="text-sm font-bold leading-none">
+            #{@room.name}
+          </h1>
+          <div class="text-xs leading-none h-3.5">
+            #{@room.topic}
+          </div>
+        </div>
+      </div>
     </div>
     """
+  end
+
+  def mount(_params, _session, socket) do
+    room = Room |> Repo.all() |> List.first()
+
+    socket =
+      socket
+      |> assign(:room, room)
+
+    {:ok, socket}
   end
 end
