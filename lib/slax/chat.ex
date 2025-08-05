@@ -122,12 +122,12 @@ defmodule Slax.Chat do
   def update_last_read_at(room, user) do
     case get_membership(room, user) do
       %RoomMembership{} = membership ->
-        timestamp =
+        id =
           from(m in Message, where: m.room_id == ^room.id, select: max(m.inserted_at))
           |> Repo.one()
 
         membership
-        |> change(%{last_read_at: timestamp})
+        |> change(%{last_read_at: id})
         |> Repo.update()
 
       nil ->
